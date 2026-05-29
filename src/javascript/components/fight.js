@@ -17,8 +17,8 @@ export function getDamage(attacker, defender) {
 
 export async function fight(firstFighter, secondFighter) {
     return new Promise(resolve => {
-        let firstFighterHealth = firstFighter.health;
-        let secondFighterHealth = secondFighter.health;
+        let firstHealth = firstFighter.health;
+        let secondHealth = secondFighter.health;
 
         const pressedKeys = new Set();
         let playerOneCritTime = 0;
@@ -29,90 +29,63 @@ export async function fight(firstFighter, secondFighter) {
 
         let cleanup;
 
+        const updateHealthBar = (position, health, maxHealth) => {
+            const bar = position === 'left' ? leftBar : rightBar;
+            if (bar) {
+                const percent = Math.max(0, (health / maxHealth) * 100);
+                bar.style.width = `${percent}%`;
+            }
+        };
+
+        const handleFighterDefeat = winner => {
+            cleanup();
+            resolve(winner);
+        };
+
         const handleKeyDown = event => {
             if (event.repeat) return;
             pressedKeys.add(event.code);
 
+            const now = Date.now();
+
             // Player One Critical Combo
-            const isPlayerOneCrit = controls.PlayerOneCriticalHitCombination.every(key => pressedKeys.has(key));
-            if (isPlayerOneCrit) {
-                const now = Date.now();
-                if (now - playerOneCritTime >= 10000) {
-                    playerOneCritTime = now;
-                    const damage = 2 * firstFighter.attack;
-                    secondFighterHealth -= damage;
-                    if (rightBar) {
-                        rightBar.style.width = `${Math.max(0, (secondFighterHealth / secondFighter.health) * 100)}%`;
-                    }
-                    if (secondFighterHealth <= 0) {
-                        cleanup();
-                        resolve(firstFighter);
-                    }
-                }
+            const isP1Crit = controls.PlayerOneCriticalHitCombination.every(key => pressedKeys.has(key));
+            if (isP1Crit && now - playerOneCritTime >= 10000) {
+                playerOneCritTime = now;
+                secondHealth -= 2 * firstFighter.attack;
+                updateHealthBar('right', secondHealth, secondFighter.health);
+                if (secondHealth <= 0) handleFighterDefeat(firstFighter);
                 return;
             }
 
             // Player Two Critical Combo
-            const isPlayerTwoCrit = controls.PlayerTwoCriticalHitCombination.every(key => pressedKeys.has(key));
-            if (isPlayerTwoCrit) {
-                const now = Date.now();
-                if (now - playerTwoCritTime >= 10000) {
-                    playerTwoCritTime = now;
-                    const damage = 2 * secondFighter.attack;
-                    firstFighterHealth -= damage;
-                    if (leftBar) {
-                        leftBar.style.width = `${Math.max(0, (firstFighterHealth / firstFighter.health) * 100)}%`;
-                    }
-                    if (firstFighterHealth <= 0) {
-                        cleanup();
-                        resolve(secondFighter);
-                    }
-                }
+            const isP2Crit = controls.PlayerTwoCriticalHitCombination.every(key => pressedKeys.has(key));
+            if (isP2Crit && now - playerTwoCritTime >= 10000) {
+                playerTwoCritTime = now;
+                firstHealth -= 2 * secondFighter.attack;
+                updateHealthBar('left', firstHealth, firstFighter.health);
+                if (firstHealth <= 0) handleFighterDefeat(secondFighter);
                 return;
             }
 
             // Player One Attack
-            if (event.code === controls.PlayerOneAttack) {
-                if (pressedKeys.has(controls.PlayerOneBlock)) return;
-
-                let damage = 0;
-                if (pressedKeys.has(controls.PlayerTwoBlock)) {
-                    damage = getDamage(firstFighter, secondFighter);
-                } else {
-                    damage = getHitPower(firstFighter);
-                }
-
-                secondFighterHealth -= damage;
-                if (rightBar) {
-                    rightBar.style.width = `${Math.max(0, (secondFighterHealth / secondFighter.health) * 100)}%`;
-                }
-
-                if (secondFighterHealth <= 0) {
-                    cleanup();
-                    resolve(firstFighter);
-                }
+            if (event.code === controls.PlayerOneAttack && !pressedKeys.has(controls.PlayerOneBlock)) {
+                const damage = pressedKeys.has(controls.PlayerTwoBlock)
+                    ? getDamage(firstFighter, secondFighter)
+                    : getHitPower(firstFighter);
+                secondHealth -= damage;
+                updateHealthBar('right', secondHealth, secondFighter.health);
+                if (secondHealth <= 0) handleFighterDefeat(firstFighter);
             }
 
             // Player Two Attack
-            if (event.code === controls.PlayerTwoAttack) {
-                if (pressedKeys.has(controls.PlayerTwoBlock)) return;
-
-                let damage = 0;
-                if (pressedKeys.has(controls.PlayerOneBlock)) {
-                    damage = getDamage(secondFighter, firstFighter);
-                } else {
-                    damage = getHitPower(secondFighter);
-                }
-
-                firstFighterHealth -= damage;
-                if (leftBar) {
-                    leftBar.style.width = `${Math.max(0, (firstFighterHealth / firstFighter.health) * 100)}%`;
-                }
-
-                if (firstFighterHealth <= 0) {
-                    cleanup();
-                    resolve(secondFighter);
-                }
+            if (event.code === controls.PlayerTwoAttack && !pressedKeys.has(controls.PlayerTwoBlock)) {
+                const damage = pressedKeys.has(controls.PlayerOneBlock)
+                    ? getDamage(secondFighter, firstFighter)
+                    : getHitPower(secondFighter);
+                firstHealth -= damage;
+                updateHealthBar('left', firstHealth, firstFighter.health);
+                if (firstHealth <= 0) handleFighterDefeat(secondFighter);
             }
         };
 
