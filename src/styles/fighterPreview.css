@@ -35,7 +35,7 @@
   align-items: center;
 }
 
-.fighter-preview___img {
+.fighter-preview___root .fighter-preview___img {
   max-height: 180px;
   object-fit: contain;
   margin-bottom: 15px;
