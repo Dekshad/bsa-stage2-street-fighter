@@ -39,7 +39,7 @@ export async function fight(firstFighter, secondFighter) {
                 const now = Date.now();
                 if (now - playerOneCritTime >= 10000) {
                     playerOneCritTime = now;
-                    const damage = 3 * firstFighter.attack;
+                    const damage = 2 * firstFighter.attack;
                     secondFighterHealth -= damage;
                     if (rightBar) {
                         rightBar.style.width = `${Math.max(0, (secondFighterHealth / secondFighter.health) * 100)}%`;
@@ -58,7 +58,7 @@ export async function fight(firstFighter, secondFighter) {
                 const now = Date.now();
                 if (now - playerTwoCritTime >= 10000) {
                     playerTwoCritTime = now;
-                    const damage = 3 * secondFighter.attack;
+                    const damage = 2 * secondFighter.attack;
                     firstFighterHealth -= damage;
                     if (leftBar) {
                         leftBar.style.width = `${Math.max(0, (firstFighterHealth / firstFighter.health) * 100)}%`;
