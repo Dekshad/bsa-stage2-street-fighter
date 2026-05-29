@@ -61,3 +61,72 @@
   width: 100%;
   background-color: #ebd759;
 }
+
+.arena___fighter {
+  position: relative;
+}
+
+.arena___damage-indicator {
+  position: absolute;
+  top: 10%;
+  transform: translateX(-50%);
+  font-family: 'Roboto', 'Outfit', 'Inter', sans-serif;
+  font-weight: 900;
+  pointer-events: none;
+  animation: floatUpAndFade 1s cubic-bezier(0.18, 0.89, 0.32, 1.28) forwards;
+  z-index: 10;
+  text-shadow: 2px 2px 0px #000;
+}
+
+.arena___damage-hit {
+  color: #ebd759;
+  font-size: 32px;
+}
+
+.arena___damage-crit {
+  color: #ba0303;
+  font-size: 44px;
+  animation: floatUpAndFadeCrit 1s cubic-bezier(0.18, 0.89, 0.32, 1.28) forwards;
+}
+
+.arena___damage-blocked {
+  color: #a0a0a0;
+  font-size: 28px;
+  text-transform: uppercase;
+}
+
+@keyframes floatUpAndFade {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, 20px) scale(0.8);
+  }
+  15% {
+    opacity: 1;
+    transform: translate(-50%, 0) scale(1.1);
+  }
+  80% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -80px) scale(0.9);
+  }
+}
+
+@keyframes floatUpAndFadeCrit {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, 20px) scale(0.5) rotate(-10deg);
+  }
+  15% {
+    opacity: 1;
+    transform: translate(-50%, 0) scale(1.35) rotate(5deg);
+  }
+  80% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -100px) scale(1) rotate(-5deg);
+  }
+}
