@@ -8,11 +8,17 @@ export default function showWinnerModal(fighter) {
         className: 'modal-body'
     });
 
+    const nameElement = createElement({
+        tagName: 'h2',
+        className: 'modal-winner-name'
+    });
+    nameElement.innerText = `${fighter.name}`;
+
     const imgElement = createFighterImage(fighter);
-    bodyElement.append(imgElement);
+    bodyElement.append(nameElement, imgElement);
 
     showModal({
-        title: `${fighter.name} is the Winner!`,
+        title: 'Winner!',
         bodyElement,
         onClose: () => {
             window.location.reload();

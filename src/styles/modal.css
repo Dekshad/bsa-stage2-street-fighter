@@ -91,3 +91,16 @@
 .close-btn:hover {
   color: #ffdfa7;
 }
+
+.modal-winner-name {
+  font-size: 28px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin: 10px 0;
+  background: linear-gradient(45deg, #ffdfa7, #ca9650);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  text-align: center;
+}
